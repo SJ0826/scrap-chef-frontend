@@ -11,6 +11,15 @@ const config: Config = {
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
+        pastel: {
+          pink: '#FFD1DC',
+          blue: '#BFEFFF',
+          yellow: '#FFFACD',
+          green: '#98FB98',
+          orange: '#FFD8B1',
+          lightorange: '#FFE8D6',
+          darkorange: '#FFA500',
+        },
       },
     },
   },
