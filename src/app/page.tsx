@@ -162,7 +162,7 @@ export default function Home() {
               ))}
             </ul>
           </CardContent>
-          <CardFooter className="bg-pastel-orange">
+          <CardFooter className="">
             <Button
               onClick={searchRecipes}
               className="w-full rounded-full bg-white hover:bg-pastel-lightorange text-pastel-darkorange"
@@ -204,7 +204,7 @@ export default function Home() {
         </CardContent>
       </Card>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="bg-white rounded-2xl border-4 border-pastel-orange">
+        <DialogContent className="bg-white rounded-2xl border-4 border-pastel-orange max-h-[80%] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl flex items-center">
               <ChefHat className="mr-2" />
