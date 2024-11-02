@@ -49,11 +49,16 @@ export default function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
+  const [mounted, setMounted] = useState(false);
+
   const totalPages = Math.ceil(totalCount / RECIPES_PER_PAGE);
 
   const addIngredient = () => {
     if (newIngredient.trim() !== '') {
-      setIngredients([...ingredients, { id: Date.now(), name: newIngredient }]);
+      setIngredients([
+        ...ingredients,
+        { id: new Date().getTime(), name: newIngredient },
+      ]);
       setNewIngredient('');
     }
   };
@@ -94,8 +99,16 @@ export default function Home() {
   };
 
   useEffect(() => {
-    searchRecipes();
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (currentPage) {
+      searchRecipes();
+    }
   }, [currentPage]);
+
+  if (!mounted) return <></>;
 
   return (
     <main className="container mx-auto max-w-3xl">
@@ -119,6 +132,11 @@ export default function Home() {
                 onChange={(e) => setNewIngredient(e.target.value)}
                 placeholder="재료 이름"
                 className="rounded-full"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    addIngredient();
+                  }
+                }}
               />
               <Button
                 onClick={addIngredient}
