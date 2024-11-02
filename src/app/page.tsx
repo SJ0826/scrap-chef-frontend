@@ -1,7 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { Refrigerator, Carrot, Plus, X, ChefHat, Search } from 'lucide-react';
+import {
+  Refrigerator,
+  Carrot,
+  Plus,
+  X,
+  ChefHat,
+  Search,
+  Loader2,
+} from 'lucide-react';
 import {
   Card,
   CardDescription,
@@ -33,6 +41,7 @@ export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const addIngredient = () => {
     if (newIngredient.trim() !== '') {
@@ -47,9 +56,16 @@ export default function Home() {
 
   const searchRecipes = async () => {
     const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
-    const response = await getRecipesAPI(ingredientNameList);
-    console.log(response);
-    setRecipes(response.data?.recipes?.recipe);
+    setIsLoading(true);
+    try {
+      const response = await getRecipesAPI(ingredientNameList);
+      console.log(response);
+      setRecipes(response.data?.recipes?.recipe);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const openRecipeModal = (recipe: Recipe) => {
@@ -126,26 +142,32 @@ export default function Home() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <ul className="grid grid-cols-2 gap-4">
-            {recipes?.map((recipe) => (
-              <li key={recipe.id} className="mb-2">
-                <Button
-                  variant="outline"
-                  onClick={() => openRecipeModal(recipe)}
-                  className="w-full h-full rounded-xl hover:bg-pastel-orange/30 flex flex-col items-center justify-center p-4"
-                >
-                  <Image
-                    src={recipe.imageUrl}
-                    alt={recipe.name}
-                    width={100}
-                    height={100}
-                    className="rounded-lg mb-2"
-                  />
-                  {recipe.name}
-                </Button>
-              </li>
-            ))}
-          </ul>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-40">
+              <Loader2 className="w-8 h-8 animate-spin text-pastel-darkorange" />
+            </div>
+          ) : (
+            <ul className="grid grid-cols-2 gap-4">
+              {recipes?.map((recipe) => (
+                <li key={recipe.id} className="mb-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => openRecipeModal(recipe)}
+                    className="w-full h-full rounded-xl hover:bg-pastel-orange/30 flex flex-col items-center justify-center p-4"
+                  >
+                    <Image
+                      src={recipe.imageUrl}
+                      alt={recipe.name}
+                      width={100}
+                      height={100}
+                      className="rounded-lg mb-2"
+                    />
+                    {recipe.name}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
