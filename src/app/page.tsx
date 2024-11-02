@@ -20,23 +20,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { getRecipesAPI } from '@/services/recipes';
 
 type Ingredient = {
   id: number;
   name: string;
-};
-
-type CookingStep = {
-  instruction: string;
-  imageUrl: string;
-};
-
-type Recipe = {
-  id: number;
-  name: string;
-  ingredients: string[];
-  cookingSteps: CookingStep[];
-  imageUrl: string;
 };
 
 export default function Home() {
@@ -57,54 +45,11 @@ export default function Home() {
     setIngredients(ingredients.filter((ing) => ing.id !== id));
   };
 
-  const searchRecipes = () => {
-    const dummyRecipes: Recipe[] = [
-      {
-        id: 1,
-        name: '김치찌개',
-        ingredients: ['김치', '돼지고기', '두부'],
-        cookingSteps: [
-          {
-            instruction: '김치를 적당한 크기로 썬다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-          {
-            instruction: '돼지고기를 볶는다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-          {
-            instruction: '물을 붓고 김치를 넣어 끓인다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-          {
-            instruction: '두부를 넣고 더 끓인다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-        ],
-        imageUrl: '/placeholder.svg?height=200&width=200',
-      },
-      {
-        id: 2,
-        name: '된장찌개',
-        ingredients: ['된장', '두부', '애호박'],
-        cookingSteps: [
-          {
-            instruction: '물을 끓인다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-          {
-            instruction: '된장을 풀어 넣는다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-          {
-            instruction: '채소와 두부를 넣고 끓인다.',
-            imageUrl: '/placeholder.svg?height=150&width=150',
-          },
-        ],
-        imageUrl: '/placeholder.svg?height=200&width=200',
-      },
-    ];
-    setRecipes(dummyRecipes);
+  const searchRecipes = async () => {
+    const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
+    const response = await getRecipesAPI(ingredientNameList);
+    console.log(response);
+    setRecipes(response.data?.recipes?.recipe);
   };
 
   const openRecipeModal = (recipe: Recipe) => {
@@ -182,7 +127,7 @@ export default function Home() {
         </CardHeader>
         <CardContent className="p-6">
           <ul className="grid grid-cols-2 gap-4">
-            {recipes.map((recipe) => (
+            {recipes?.map((recipe) => (
               <li key={recipe.id} className="mb-2">
                 <Button
                   variant="outline"
@@ -231,11 +176,11 @@ export default function Home() {
             </ul>
             <h3 className="font-bold mb-2 text-lg">조리 방법:</h3>
             <ol className="space-y-4">
-              {selectedRecipe?.cookingSteps.map((step, index) => (
+              {selectedRecipe?.manualSteps.map((manual, index) => (
                 <li key={index} className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     <Image
-                      src={step.imageUrl}
+                      src={manual.imageUrl}
                       alt={`Step ${index + 1}`}
                       width={150}
                       height={150}
@@ -243,9 +188,7 @@ export default function Home() {
                     />
                   </div>
                   <div className="flex-grow">
-                    <p className="text-lg">
-                      {index + 1}. {step.instruction}
-                    </p>
+                    <p className="text-lg">{manual.step}</p>
                   </div>
                 </li>
               ))}
