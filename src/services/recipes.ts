@@ -1,13 +1,14 @@
 import { ApiResponse, getData } from '@/services/apiClient';
 
 export async function getRecipesAPI(
-  ingredients: string[]
+  ingredients: string[],
+  page: number
 ): Promise<ApiResponse<RecipesData>> {
   const query = ingredients
     .map((ingredient) => `ingredients=${encodeURIComponent(ingredient)}`)
     .join('&');
 
-  const path = `/recipes?${query}`;
+  const path = `/recipes?${query}&page=${page}`;
 
   return getData<RecipesData>(path);
 }

@@ -9,6 +9,8 @@ import {
   ChefHat,
   Search,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import {
   Card,
@@ -19,7 +21,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -35,6 +37,8 @@ type Ingredient = {
   name: string;
 };
 
+const RECIPES_PER_PAGE = 6;
+
 export default function Home() {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [newIngredient, setNewIngredient] = useState('');
@@ -42,6 +46,10 @@ export default function Home() {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const totalPages = Math.ceil(totalCount / RECIPES_PER_PAGE);
 
   const addIngredient = () => {
     if (newIngredient.trim() !== '') {
@@ -58,9 +66,9 @@ export default function Home() {
     const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
     setIsLoading(true);
     try {
-      const response = await getRecipesAPI(ingredientNameList);
-      console.log(response);
+      const response = await getRecipesAPI(ingredientNameList, currentPage);
       setRecipes(response.data?.recipes?.recipe);
+      setTotalCount(Number(response.data?.recipes?.totalCount));
     } catch (error) {
       console.error('Error fetching recipes:', error);
     } finally {
@@ -72,6 +80,22 @@ export default function Home() {
     setSelectedRecipe(recipe);
     setIsModalOpen(true);
   };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  useEffect(() => {
+    searchRecipes();
+  }, [currentPage]);
 
   return (
     <main className="container mx-auto max-w-3xl">
@@ -147,26 +171,53 @@ export default function Home() {
               <Loader2 className="w-8 h-8 animate-spin text-pastel-darkorange" />
             </div>
           ) : (
-            <ul className="grid grid-cols-2 gap-4">
-              {recipes?.map((recipe) => (
-                <li key={recipe.id} className="mb-2">
+            <div>
+              <ul className="grid grid-cols-2 gap-4">
+                {recipes?.map((recipe) => (
+                  <li key={recipe.id} className="mb-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => openRecipeModal(recipe)}
+                      className="w-full h-full rounded-xl hover:bg-pastel-orange/30 flex flex-col items-center justify-center p-4"
+                    >
+                      <Image
+                        src={recipe.imageUrl}
+                        alt={recipe.name}
+                        width={100}
+                        height={100}
+                        className="rounded-lg mb-2"
+                      />
+                      {recipe.name}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+              {recipes?.length > 0 ? (
+                <div className="flex justify-between items-center mt-4">
                   <Button
-                    variant="outline"
-                    onClick={() => openRecipeModal(recipe)}
-                    className="w-full h-full rounded-xl hover:bg-pastel-orange/30 flex flex-col items-center justify-center p-4"
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className="rounded-full bg-pastel-orange hover:bg-pastel-orange/80 text-white"
                   >
-                    <Image
-                      src={recipe.imageUrl}
-                      alt={recipe.name}
-                      width={100}
-                      height={100}
-                      className="rounded-lg mb-2"
-                    />
-                    {recipe.name}
+                    <ChevronLeft size={18} />
+                    이전
                   </Button>
-                </li>
-              ))}
-            </ul>
+                  <span className="text-pastel-darkorange">
+                    {currentPage} / {totalPages}
+                  </span>
+                  <Button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className="rounded-full bg-pastel-orange hover:bg-pastel-orange/80 text-white"
+                  >
+                    다음
+                    <ChevronRight size={18} />
+                  </Button>
+                </div>
+              ) : (
+                <span>레시피 정보가 없습니다</span>
+              )}
+            </div>
           )}
         </CardContent>
       </Card>
