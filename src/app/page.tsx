@@ -215,7 +215,7 @@ export default function Home() {
                   <Button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
-                    className="rounded-full bg-pastel-orange hover:bg-pastel-orange/80 text-white"
+                    className="rounded-full bg-pastel-darkorange hover:bg-pastel-darkorange/80 text-white"
                   >
                     <ChevronLeft size={18} />
                     이전
@@ -226,7 +226,7 @@ export default function Home() {
                   <Button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className="rounded-full bg-pastel-orange hover:bg-pastel-orange/80 text-white"
+                    className="rounded-full bg-pastel-darkorange hover:bg-pastel-darkorange/80 text-white"
                   >
                     다음
                     <ChevronRight size={18} />
