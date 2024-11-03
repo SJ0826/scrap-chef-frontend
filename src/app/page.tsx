@@ -67,11 +67,11 @@ export default function Home() {
     setIngredients(ingredients.filter((ing) => ing.id !== id));
   };
 
-  const searchRecipes = async () => {
+  const searchRecipes = async (page = 1) => {
     const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
     setIsLoading(true);
     try {
-      const response = await getRecipesAPI(ingredientNameList, currentPage);
+      const response = await getRecipesAPI(ingredientNameList, page);
       setRecipes(response.data?.recipes?.recipe);
       setTotalCount(Number(response.data?.recipes?.totalCount));
     } catch (error) {
@@ -86,27 +86,25 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
-  const goToNextPage = () => {
+  const goToNextPage = async () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+      await searchRecipes(nextPage); // 페이지 변경 즉시 검색 함수 호출
     }
   };
 
-  const goToPreviousPage = () => {
+  const goToPreviousPage = async () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      const previousPage = currentPage - 1;
+      setCurrentPage(previousPage);
+      await searchRecipes(previousPage); // 페이지 변경 즉시 검색 함수 호출
     }
   };
 
   useEffect(() => {
     setMounted(true);
   }, []);
-
-  useEffect(() => {
-    if (currentPage) {
-      searchRecipes();
-    }
-  }, [currentPage]);
 
   if (!mounted) return <></>;
 
@@ -167,7 +165,7 @@ export default function Home() {
           </CardContent>
           <CardFooter className="">
             <Button
-              onClick={searchRecipes}
+              onClick={() => searchRecipes(1)}
               className="w-full rounded-full bg-white hover:bg-pastel-lightorange text-pastel-darkorange"
             >
               <Search size={18} className="mr-2" />
