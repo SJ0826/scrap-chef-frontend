@@ -7,7 +7,6 @@ export async function getRecipesAPI(
   const query = ingredients
     .map((ingredient) => `ingredients=${encodeURIComponent(ingredient)}`)
     .join('&');
-  console.log(page);
   const path = `/recipes?${query}&page=${page}`;
 
   return getData<RecipesData>(path);
