@@ -4,14 +4,18 @@ import Image from 'next/image';
 import {
   Refrigerator,
   Carrot,
-  Plus,
-  X,
   ChefHat,
+  X,
+  Plus,
   Search,
   Loader2,
   ChevronLeft,
   ChevronRight,
+  LogOut,
+  LogIn,
+  UserPlus,
 } from 'lucide-react';
+
 import {
   Card,
   CardDescription,
@@ -30,7 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { getRecipesAPI } from '@/services/recipes';
+import { SignupModal } from '@/components/auth/SignupModal';
 
 type Ingredient = {
   id: number;
@@ -48,6 +52,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -68,17 +75,17 @@ export default function Home() {
   };
 
   const searchRecipes = async (page = 1) => {
-    const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
-    setIsLoading(true);
-    try {
-      const response = await getRecipesAPI(ingredientNameList, page);
-      setRecipes(response.data?.recipes?.recipe);
-      setTotalCount(Number(response.data?.recipes?.totalCount));
-    } catch (error) {
-      console.error('Error fetching recipes:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    // const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
+    // setIsLoading(true);
+    // try {
+    //   const response = await getRecipesAPI(ingredientNameList, page);
+    //   setRecipes(response.data?.recipes?.recipe);
+    //   setTotalCount(Number(response.data?.recipes?.totalCount));
+    // } catch (error) {
+    //   console.error('Error fetching recipes:', error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   const openRecipeModal = (recipe: Recipe) => {
@@ -102,6 +109,8 @@ export default function Home() {
     }
   };
 
+  const handleLogout = () => {};
+
   useEffect(() => {
     setMounted(true);
   }, []);
@@ -109,11 +118,55 @@ export default function Home() {
   if (!mounted) return <></>;
 
   return (
-    <main className="container mx-auto max-w-3xl">
-      <h1 className="text-4xl font-bold mb-8 text-center  flex items-center justify-center">
-        <Refrigerator className="mr-2" />
-        냉장고 탈탈
-      </h1>
+    <main className="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg p-6">
+      <nav className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold flex items-center">
+          <Refrigerator className="mr-2" />
+          냉장고탈탈
+        </h1>
+        <div className="flex items-center space-x-2">
+          {isLoggedIn ? (
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="flex items-center"
+            >
+              <LogOut className="mr-2" size={18} />
+              로그아웃
+            </Button>
+          ) : (
+            <>
+              <Button
+                onClick={() => setIsLoginModalOpen(true)}
+                variant="outline"
+                className="flex items-center"
+              >
+                <LogIn className="mr-2" size={18} />
+                로그인
+              </Button>
+              <Button
+                onClick={() => setIsSignUpModalOpen(true)}
+                variant="outline"
+                className="flex items-center"
+              >
+                <UserPlus className="mr-2" size={18} />
+                회원가입
+              </Button>
+            </>
+          )}
+        </div>
+      </nav>
+
+      {!isLoggedIn && (
+        <Card className="mb-8 bg-pastel-orange/20 border-pastel-orange">
+          <CardContent className="p-4">
+            <p className="text-pastel-darkorange text-center">
+              회원가입하고 레시피를 저장해보세요! 자주 사용하는 레시피를
+              언제든지 쉽게 찾아볼 수 있습니다.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="mb-8 shadow-lg rounded-2xl overflow-hidden border-4">
         <CardHeader>
@@ -293,6 +346,10 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <SignupModal
+        isSignUpModalOpen={isSignUpModalOpen}
+        setIsSignUpModalOpen={setIsSignUpModalOpen}
+      />
     </main>
   );
 }
