@@ -1,6 +1,12 @@
 'use client';
 
-import { Dispatch, FormEvent, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { Dialog, DialogHeader, DialogOverlay } from '@/components/ui/dialog';
 import { DialogContent, DialogTitle } from '@radix-ui/react-dialog';
 import { Eye, EyeOff } from 'lucide-react';
@@ -32,6 +38,9 @@ export const SignupModal = (props: SignupModalProps) => {
     mutationFn: postSignupApi,
     onSuccess: (res) => {
       toast.success(TOAST_MESSAGE.SIGNUP_SUCCESS);
+      setLoginId('');
+      setPassword('');
+      setConfirmPassword('');
       setIsSignUpModalOpen(false);
     },
     onError: (error) => {
@@ -69,6 +78,8 @@ export const SignupModal = (props: SignupModalProps) => {
     signupMutate({ loginId, password });
   };
 
+  useEffect(() => {}, []);
+
   return (
     <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
       <DialogOverlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
@@ -88,6 +99,7 @@ export const SignupModal = (props: SignupModalProps) => {
                 value={loginId}
                 onChange={(e) => setLoginId(e.target.value)}
                 required
+                autoComplete={'new-password'}
               />
             </div>
             <div className="space-y-2">
@@ -99,6 +111,7 @@ export const SignupModal = (props: SignupModalProps) => {
                   placeholder="비밀번호를 입력하세요"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete={'new-password'}
                 />
                 <Button
                   type="button"
@@ -124,6 +137,7 @@ export const SignupModal = (props: SignupModalProps) => {
                   placeholder="비밀번호를 다시 입력하세요"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  autoComplete={'new-password'}
                 />
                 <Button
                   type="button"
