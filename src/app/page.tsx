@@ -35,6 +35,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { SignupModal } from '@/components/auth/SignupModal';
+import { SigninModal } from '@/components/auth/SigninModal';
 
 type Ingredient = {
   id: number;
@@ -346,6 +347,10 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <SigninModal
+        isLoginModalOpen={isLoginModalOpen}
+        setIsLoginModalOpen={setIsLoginModalOpen}
+      />
       <SignupModal
         isSignUpModalOpen={isSignUpModalOpen}
         setIsSignUpModalOpen={setIsSignUpModalOpen}

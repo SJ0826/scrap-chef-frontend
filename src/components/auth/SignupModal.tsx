@@ -38,9 +38,6 @@ export const SignupModal = (props: SignupModalProps) => {
     mutationFn: postSignupApi,
     onSuccess: (res) => {
       toast.success(TOAST_MESSAGE.SIGNUP_SUCCESS);
-      setLoginId('');
-      setPassword('');
-      setConfirmPassword('');
       setIsSignUpModalOpen(false);
     },
     onError: (error) => {
@@ -78,7 +75,11 @@ export const SignupModal = (props: SignupModalProps) => {
     signupMutate({ loginId, password });
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setLoginId('');
+    setPassword('');
+    setConfirmPassword('');
+  }, [isSignUpModalOpen]);
 
   return (
     <Dialog open={isSignUpModalOpen} onOpenChange={setIsSignUpModalOpen}>
