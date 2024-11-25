@@ -36,6 +36,8 @@ import {
 } from '@/components/ui/dialog';
 import { SignupModal } from '@/components/auth/SignupModal';
 import { SigninModal } from '@/components/auth/SigninModal';
+import { getAccessTokenFromLocalStorage } from '@/utils/localStorage';
+import { SignoutModal } from '@/components/auth/SignoutModal';
 
 type Ingredient = {
   id: number;
@@ -56,6 +58,7 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [isSignOutModalOpen, setIsSignOutModalOpen] = useState(false);
 
   const [mounted, setMounted] = useState(false);
 
@@ -110,14 +113,26 @@ export default function Home() {
     }
   };
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    setIsSignOutModalOpen(true);
+  };
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return <></>;
+  /**
+   * 로그인 상태를 체크합니다.
+   */
+  useEffect(() => {
+    if (getAccessTokenFromLocalStorage()) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, [isLoginModalOpen, isSignOutModalOpen]);
 
+  if (!mounted) return <></>;
   return (
     <main className="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg p-6">
       <nav className="flex justify-between items-center mb-8">
@@ -354,6 +369,10 @@ export default function Home() {
       <SignupModal
         isSignUpModalOpen={isSignUpModalOpen}
         setIsSignUpModalOpen={setIsSignUpModalOpen}
+      />
+      <SignoutModal
+        isSignoutModalOpen={isSignOutModalOpen}
+        setIsSignoutModalOpen={setIsSignOutModalOpen}
       />
     </main>
   );

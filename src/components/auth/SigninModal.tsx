@@ -21,6 +21,10 @@ import { postSigninApi, postSignupApi } from '@/services/auth';
 import { toast } from 'react-toastify';
 import { AxiosError } from 'axios';
 import { GenericResponse } from '@/types/common.interface';
+import {
+  setAccessTokenFromLocalStorage,
+  setRefreshTokenFromLocalStorage,
+} from '@/utils/localStorage';
 
 interface SigninModalProps {
   isLoginModalOpen: boolean;
@@ -37,6 +41,10 @@ export const SigninModal = (props: SigninModalProps) => {
   const { mutate: signinMutate } = useMutation({
     mutationFn: postSigninApi,
     onSuccess: (res) => {
+      const { accessToken, refreshToken } = res.data;
+      setAccessTokenFromLocalStorage(accessToken);
+      setRefreshTokenFromLocalStorage(refreshToken);
+
       toast.success('로그인에 성공했습니다');
       setIsLoginModalOpen(false);
     },
@@ -56,9 +64,11 @@ export const SigninModal = (props: SigninModalProps) => {
   };
 
   useEffect(() => {
+    // 모달이 닫히면 input이 초기화 됩니다.
     setLoginId('');
     setPassword('');
   }, [isLoginModalOpen]);
+
   return (
     <Dialog open={isLoginModalOpen} onOpenChange={setIsLoginModalOpen}>
       <DialogOverlay className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
