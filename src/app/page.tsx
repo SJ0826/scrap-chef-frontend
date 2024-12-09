@@ -38,17 +38,12 @@ import { SignupModal } from '@/components/auth/SignupModal';
 import { SigninModal } from '@/components/auth/SigninModal';
 import { getAccessTokenFromLocalStorage } from '@/utils/localStorage';
 import { SignoutModal } from '@/components/auth/SignoutModal';
-
-type Ingredient = {
-  id: number;
-  name: string;
-};
+import { IngredientCard } from '@/components/ingredient/IngredientCard';
+import IngredientCardFromMemory from '@/components/ingredient/IngredientCardFromMemory';
 
 const RECIPES_PER_PAGE = 6;
 
 export default function Home() {
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [newIngredient, setNewIngredient] = useState('');
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,20 +58,6 @@ export default function Home() {
   const [mounted, setMounted] = useState(false);
 
   const totalPages = Math.ceil(totalCount / RECIPES_PER_PAGE);
-
-  const addIngredient = () => {
-    if (newIngredient.trim() !== '') {
-      setIngredients([
-        ...ingredients,
-        { id: new Date().getTime(), name: newIngredient },
-      ]);
-      setNewIngredient('');
-    }
-  };
-
-  const removeIngredient = (id: number) => {
-    setIngredients(ingredients.filter((ing) => ing.id !== id));
-  };
 
   const searchRecipes = async (page = 1) => {
     // const ingredientNameList = ingredients.map((ingredient) => ingredient.name);
@@ -132,7 +113,6 @@ export default function Home() {
     }
   }, [isLoginModalOpen, isSignOutModalOpen]);
 
-  if (!mounted) return <></>;
   return (
     <main className="container mx-auto max-w-3xl bg-white shadow-lg rounded-lg p-6">
       <nav className="flex justify-between items-center mb-8">
@@ -183,66 +163,13 @@ export default function Home() {
           </CardContent>
         </Card>
       )}
+      {isLoggedIn ? (
+        // TODO: 로그인을 통해 인증상태인 재료카드 컴포넌트
+        <></>
+      ) : (
+        <IngredientCardFromMemory handleSearchRecipes={searchRecipes} />
+      )}
 
-      <Card className="mb-8 shadow-lg rounded-2xl overflow-hidden border-4">
-        <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
-            <Carrot className="mr-2" />
-            냉장고 재료
-          </CardTitle>
-          <CardDescription>냉장고에 있는 재료를 입력하세요</CardDescription>
-          <CardContent className="p-6">
-            <div className="flex space-x-2 mb-4">
-              <Input
-                type="text"
-                value={newIngredient}
-                onChange={(e) => setNewIngredient(e.target.value)}
-                placeholder="재료 이름"
-                className="rounded-full"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    addIngredient();
-                  }
-                }}
-              />
-              <Button
-                onClick={addIngredient}
-                className="rounded-full bg-pastel-darkorange hover:bg-pastel-darkorange/80 text-white"
-              >
-                <Plus size={18} />
-                추가
-              </Button>
-            </div>
-            <ul className="space-y-2">
-              {ingredients.map((ing) => (
-                <li
-                  key={ing.id}
-                  className="flex justify-between items-center p-2 bg-pastel-orange/30 rounded-full"
-                >
-                  <span className="ml-4">{ing.name}</span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeIngredient(ing.id)}
-                    className="rounded-full text-pastel-darkorange hover:text-pastel-darkorange/80"
-                  >
-                    <X size={18} />
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-          <CardFooter className="">
-            <Button
-              onClick={() => searchRecipes(1)}
-              className="w-full rounded-full bg-white hover:bg-pastel-lightorange text-pastel-darkorange"
-            >
-              <Search size={18} className="mr-2" />
-              레시피 검색
-            </Button>
-          </CardFooter>
-        </CardHeader>
-      </Card>
       <Card className="mb-8 shadow-lg rounded-2xl overflow-hidden border-4">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
