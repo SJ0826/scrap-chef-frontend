@@ -1,5 +1,5 @@
 export interface GenericResponse {
-  data: never;
+  data: any;
   message: string;
   length?: number;
   code?: number;

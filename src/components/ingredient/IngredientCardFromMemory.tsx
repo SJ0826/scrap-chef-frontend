@@ -19,14 +19,14 @@ export const IngredientCardFromMemory = (
     if (newIngredient.trim() !== '') {
       setIngredients([
         ...ingredients,
-        { id: new Date().getTime(), name: newIngredient },
+        { id: new Date().getTime(), title: newIngredient },
       ]);
       setNewIngredient('');
     } else {
       setNewIngredient('');
     }
   };
-  console.log(addIngredient);
+
   const removeIngredient = (id: number) => {
     setIngredients(ingredients.filter((ing) => ing.id !== id));
   };

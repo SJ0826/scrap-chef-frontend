@@ -11,14 +11,7 @@ import {
 import { Carrot, Plus, Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
-import { getAccessTokenFromLocalStorage } from '@/utils/localStorage';
+import { ChangeEvent } from 'react';
 import { Ingredient } from '@/types/ingredient.interface';
 
 interface IngredientCardProps {
@@ -39,16 +32,6 @@ export const IngredientCard = (props: IngredientCardProps) => {
     addIngredient,
     removeIngredient,
   } = props;
-
-  /**
-   * 로그인 여부를 판단합니다.
-   */
-  const [isSignin, setIsSignin] = useState(false);
-  useEffect(() => {
-    const accessToken = getAccessTokenFromLocalStorage();
-    setIsSignin(!!accessToken);
-  }, []);
-
   return (
     <Card className="mb-8 shadow-lg rounded-2xl overflow-hidden border-4">
       <CardHeader>
@@ -85,7 +68,7 @@ export const IngredientCard = (props: IngredientCardProps) => {
                 key={ing.id}
                 className="flex justify-between items-center p-2 bg-pastel-orange/30 rounded-full"
               >
-                <span className="ml-4">{ing.name}</span>
+                <span className="ml-4">{ing.title}</span>
                 <Button
                   variant="ghost"
                   size="sm"

@@ -2,29 +2,17 @@
 
 import Image from 'next/image';
 import {
-  Refrigerator,
-  Carrot,
   ChefHat,
-  X,
-  Plus,
-  Search,
-  Loader2,
   ChevronLeft,
   ChevronRight,
-  LogOut,
+  Loader2,
   LogIn,
+  LogOut,
+  Refrigerator,
   UserPlus,
 } from 'lucide-react';
 
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardContent,
-  CardFooter,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,8 +26,8 @@ import { SignupModal } from '@/components/auth/SignupModal';
 import { SigninModal } from '@/components/auth/SigninModal';
 import { getAccessTokenFromLocalStorage } from '@/utils/localStorage';
 import { SignoutModal } from '@/components/auth/SignoutModal';
-import { IngredientCard } from '@/components/ingredient/IngredientCard';
 import IngredientCardFromMemory from '@/components/ingredient/IngredientCardFromMemory';
+import IngredientCardFromApi from '@/components/ingredient/IngredientCardFromApi';
 
 const RECIPES_PER_PAGE = 6;
 
@@ -164,8 +152,7 @@ export default function Home() {
         </Card>
       )}
       {isLoggedIn ? (
-        // TODO: 로그인을 통해 인증상태인 재료카드 컴포넌트
-        <></>
+        <IngredientCardFromApi />
       ) : (
         <IngredientCardFromMemory handleSearchRecipes={searchRecipes} />
       )}

@@ -1,6 +1,7 @@
 import { publicAxios } from '@/services/axios.client';
 import { AuthDto } from '@/types/auth.interface';
 import { GenericResponse } from '@/types/common.interface';
+import { getRefreshTokenFromLocalStorage } from '@/utils/localStorage';
 
 const AUTH = '/auth';
 
@@ -21,5 +22,12 @@ export const postSigninApi = async (data: AuthDto) => {
 // 토큰 갱신
 export const postRefreshTokenApi = async () => {
   const url = `${AUTH}/token/refresh`;
-  return (await publicAxios.post(url)).data;
+
+  return (
+    await publicAxios.post(url, null, {
+      headers: {
+        Authorization: `Bearer ${getRefreshTokenFromLocalStorage()}`,
+      },
+    })
+  ).data;
 };
